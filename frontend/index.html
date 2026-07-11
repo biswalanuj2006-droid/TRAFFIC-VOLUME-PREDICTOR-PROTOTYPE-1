@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart Traffic Volume & Prediction System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet" />
+  <link href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="cyber-bg-grid"></div>
+  <div class="scanline-overlay"></div>
+
+  <div id="app-root">
+    <!-- AUTH VIEW -->
+    <section id="view-auth" class="view-section active-view">
+      <div class="auth-shell">
+        <div class="brand-header text-center mb-4">
+          <div class="brand-icon"><i class="fa-solid fa-traffic-light"></i></div>
+          <h1 class="brand-title">TRAFFIC<span class="accent">NEXUS</span></h1>
+          <p class="brand-sub">Real-Time Smart Traffic Volume & Prediction System</p>
+        </div>
+
+        <div class="glass-panel auth-card hover-3d">
+          <div class="auth-tabs">
+            <button id="tab-login" class="auth-tab active" type="button">Login</button>
+            <button id="tab-register" class="auth-tab" type="button">Create Account</button>
+          </div>
+
+          <form id="login-form" class="auth-form active-form">
+            <div class="form-floating-group">
+              <label for="login-identifier">Username or Email</label>
+              <input id="login-identifier" type="text" placeholder="operator@city.gov" required />
+            </div>
+            <div class="form-floating-group">
+              <label for="login-password">Password</label>
+              <input id="login-password" type="password" placeholder="••••••••" required />
+            </div>
+            <button type="submit" class="btn-cyber w-100"><i class="fa-solid fa-right-to-bracket"></i> Secure Login</button>
+          </form>
+
+          <form id="register-form" class="auth-form">
+            <div class="form-floating-group">
+              <label for="register-username">Username</label>
+              <input id="register-username" type="text" placeholder="traffic_ops" required />
+            </div>
+            <div class="form-floating-group">
+              <label for="register-email">Email</label>
+              <input id="register-email" type="email" placeholder="you@domain.com" required />
+            </div>
+            <div class="form-floating-group">
+              <label for="register-password">Password</label>
+              <input id="register-password" type="password" placeholder="••••••••" required />
+            </div>
+            <button type="submit" class="btn-cyber w-100"><i class="fa-solid fa-user-plus"></i> Create Account</button>
+          </form>
+
+          <div class="oauth-divider"><span>OR CONTINUE WITH</span></div>
+          <div class="oauth-actions">
+            <button id="oauth-google" class="btn-oauth google" type="button">
+              <i class="fa-brands fa-google"></i> Sign in with Google
+            </button>
+            <button id="oauth-github" class="btn-oauth github" type="button">
+              <i class="fa-brands fa-github"></i> Sign in with GitHub
+            </button>
+          </div>
+          <p id="auth-message" class="auth-message"></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- USER DASHBOARD -->
+    <section id="view-dashboard" class="view-section">
+      <header class="top-bar glass-panel">
+        <div class="top-bar-left">
+          <h2><i class="fa-solid fa-satellite-dish"></i> Operator Console</h2>
+          <span id="user-greeting" class="user-greeting">Welcome, Operator</span>
+        </div>
+        <div class="top-bar-right">
+          <button id="btn-admin" class="btn-ghost hidden" type="button"><i class="fa-solid fa-shield-halved"></i> Admin</button>
+          <button id="btn-logout" class="btn-ghost danger" type="button"><i class="fa-solid fa-power-off"></i> Logout</button>
+        </div>
+      </header>
+
+      <div class="dashboard-grid">
+        <div class="glass-panel nlp-panel hover-3d">
+          <div class="panel-header">
+            <h3><i class="fa-solid fa-brain"></i> NLP Command Bridge</h3>
+            <span class="status-pill live">LIVE</span>
+          </div>
+          <div class="nlp-input-row">
+            <input id="nlp-command" type="text" placeholder='Predict traffic for tomorrow at 5 PM if raining...' />
+            <button id="nlp-submit" class="btn-cyber" type="button"><i class="fa-solid fa-bolt"></i> Execute</button>
+          </div>
+          <div id="nlp-result" class="nlp-result">Awaiting natural language command...</div>
+        </div>
+
+        <div class="glass-panel weather-panel hover-3d">
+          <div class="panel-header">
+            <h3><i class="fa-solid fa-cloud-sun"></i> Live Weather Tracker</h3>
+            <span id="weather-updated" class="meta-text">Syncing...</span>
+          </div>
+          <div class="weather-grid">
+            <div class="weather-stat">
+              <span class="label">Temperature</span>
+              <span id="weather-temp" class="value">--°C</span>
+            </div>
+            <div class="weather-stat">
+              <span class="label">Wind Speed</span>
+              <span id="weather-wind" class="value">-- km/h</span>
+            </div>
+            <div class="weather-stat">
+              <span class="label">Condition</span>
+              <span id="weather-code" class="value">--</span>
+            </div>
+            <div class="weather-stat">
+              <span class="label">Precipitation</span>
+              <span id="weather-precip" class="value">-- mm</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="glass-panel map-panel hover-3d span-2">
+          <div class="panel-header">
+            <h3><i class="fa-solid fa-map-location-dot"></i> Geographic Traffic Visualizer</h3>
+            <span id="selected-intersection" class="meta-text">INT-01 · Central Plaza</span>
+          </div>
+          <div id="traffic-map" class="traffic-map"></div>
+          <div id="map-legend" class="map-legend">
+            <span class="legend-item green"><i class="fa-solid fa-circle"></i> Light</span>
+            <span class="legend-item yellow"><i class="fa-solid fa-circle"></i> Moderate</span>
+            <span class="legend-item red"><i class="fa-solid fa-circle"></i> Critical</span>
+          </div>
+        </div>
+
+        <div class="glass-panel calendar-panel hover-3d">
+          <div class="panel-header">
+            <h3><i class="fa-solid fa-calendar-days"></i> Cyber Calendar</h3>
+            <div class="calendar-nav">
+              <button id="cal-prev" type="button"><i class="fa-solid fa-chevron-left"></i></button>
+              <span id="cal-month-label">Month</span>
+              <button id="cal-next" type="button"><i class="fa-solid fa-chevron-right"></i></button>
+            </div>
+          </div>
+          <div class="calendar-weekdays">
+            <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+          </div>
+          <div id="calendar-grid" class="calendar-grid"></div>
+          <p id="calendar-hint" class="calendar-hint">Select a date to load historical logs or ML forecasts.</p>
+        </div>
+
+        <div class="glass-panel chart-panel hover-3d span-2">
+          <div class="panel-header">
+            <h3><i class="fa-solid fa-chart-line"></i> Real-Time Telemetry Stream</h3>
+            <span id="telemetry-status" class="status-pill">POLLING 2s</span>
+          </div>
+          <canvas id="line-chart"></canvas>
+        </div>
+
+        <div class="glass-panel chart-panel hover-3d">
+          <div class="panel-header">
+            <h3><i class="fa-solid fa-chart-pie"></i> Fleet Distribution</h3>
+          </div>
+          <canvas id="fleet-chart"></canvas>
+        </div>
+
+        <div class="glass-panel dataset-panel hover-3d span-2">
+          <div class="panel-header">
+            <h3><i class="fa-solid fa-table"></i> Kaggle CSV Training Dataset</h3>
+            <span id="dataset-source" class="meta-text">Loading...</span>
+          </div>
+          <div class="dataset-layout">
+            <div class="dataset-stats">
+              <div class="dataset-stat"><span>Rows</span><strong id="dataset-rows">--</strong></div>
+              <div class="dataset-stat"><span>Mean Volume</span><strong id="dataset-mean">--</strong></div>
+              <div class="dataset-stat"><span>Max Volume</span><strong id="dataset-max">--</strong></div>
+              <div class="dataset-stat"><span>Min Volume</span><strong id="dataset-min">--</strong></div>
+            </div>
+            <img id="dataset-chart" class="dataset-chart" src="" alt="Traffic volume matplotlib chart" />
+          </div>
+          <div class="table-responsive dataset-table-wrap">
+            <table class="cyber-table">
+              <thead><tr><th>ID</th><th>Traffic Volume</th></tr></thead>
+              <tbody id="dataset-preview-body"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="glass-panel metrics-panel hover-3d">
+          <div class="panel-header">
+            <h3><i class="fa-solid fa-gauge-high"></i> Zone Metrics</h3>
+          </div>
+          <div class="metric-cards">
+            <div class="metric-card">
+              <span class="metric-label">Vehicle Count</span>
+              <span id="metric-vehicles" class="metric-value">0</span>
+            </div>
+            <div class="metric-card">
+              <span class="metric-label">Congestion Index</span>
+              <span id="metric-congestion" class="metric-value">0.00</span>
+            </div>
+            <div class="metric-card">
+              <span class="metric-label">Density State</span>
+              <span id="metric-density" class="metric-value density-green">LIGHT</span>
+            </div>
+            <div class="metric-card">
+              <span class="metric-label">ML Forecast</span>
+              <span id="metric-forecast" class="metric-value">--</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ADMIN PANEL -->
+    <section id="view-admin" class="view-section">
+      <header class="top-bar glass-panel">
+        <div class="top-bar-left">
+          <h2><i class="fa-solid fa-server"></i> Admin Train Engine Console</h2>
+        </div>
+        <div class="top-bar-right">
+          <button id="btn-back-dashboard" class="btn-ghost" type="button"><i class="fa-solid fa-arrow-left"></i> Dashboard</button>
+        </div>
+      </header>
+
+      <div class="admin-grid">
+        <div class="glass-panel admin-model hover-3d span-2">
+          <div class="panel-header">
+            <h3><i class="fa-solid fa-robot"></i> ML Training Engine</h3>
+            <button id="btn-retrain" class="btn-cyber" type="button"><i class="fa-solid fa-rotate"></i> Retrain Model</button>
+            <button id="btn-kaggle-sync" class="btn-ghost" type="button"><i class="fa-brands fa-kaggle"></i> Sync Kaggle</button>
+          </div>
+          <div class="model-stats">
+            <div class="model-stat"><span>Model Type</span><strong id="admin-model-type">--</strong></div>
+            <div class="model-stat"><span>CSV Rows</span><strong id="admin-csv-rows">--</strong></div>
+            <div class="model-stat"><span>Mean Squared Error</span><strong id="admin-mse">--</strong></div>
+            <div class="model-stat"><span>R² Score</span><strong id="admin-r2">--</strong></div>
+            <div class="model-stat"><span>Training Rows</span><strong id="admin-rows">--</strong></div>
+            <div class="model-stat"><span>Last Trained</span><strong id="admin-trained">--</strong></div>
+            <div class="model-stat"><span>System Health</span><strong id="admin-health" class="health-ok">--</strong></div>
+          </div>
+          <div class="epoch-section">
+            <h4>Epoch Loss Curve</h4>
+            <canvas id="epoch-chart"></canvas>
+          </div>
+        </div>
+
+        <div class="glass-panel admin-table hover-3d">
+          <div class="panel-header">
+            <h3><i class="fa-solid fa-users"></i> Account Registry</h3>
+          </div>
+          <div class="table-responsive">
+            <table class="cyber-table">
+              <thead>
+                <tr><th>ID</th><th>Username</th><th>Email</th><th>Role</th><th>OAuth</th></tr>
+              </thead>
+              <tbody id="admin-users-body"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="glass-panel admin-table hover-3d span-2">
+          <div class="panel-header">
+            <h3><i class="fa-solid fa-database"></i> Traffic Log Stream</h3>
+          </div>
+          <div class="table-responsive">
+            <table class="cyber-table">
+              <thead>
+                <tr><th>ID</th><th>Intersection</th><th>Timestamp</th><th>Hour</th><th>Count</th><th>Congestion</th></tr>
+              </thead>
+              <tbody id="admin-logs-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

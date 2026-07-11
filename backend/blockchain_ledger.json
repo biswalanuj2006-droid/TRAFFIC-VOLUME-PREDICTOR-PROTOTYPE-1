@@ -1,0 +1,11 @@
+[
+  {
+    "index_num": 0,
+    "timestamp": "2026-07-11T18:14:00.632915Z",
+    "data_type": "genesis",
+    "payload": "{\"message\": \"TrafficNexus Genesis Block\", \"system\": \"Smart Traffic Volume System\"}",
+    "previous_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+    "hash": "0092f235091d7fc95bffaf1b658df42a3232a19f009cfb3234abb8785f625acb",
+    "nonce": 595
+  }
+]

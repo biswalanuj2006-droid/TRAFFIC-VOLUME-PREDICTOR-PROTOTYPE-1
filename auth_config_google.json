@@ -1,0 +1,6 @@
+{
+  "client_id": "MOCK_ID.apps.googleusercontent.com",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "scopes": ["profile", "email"]
+}
